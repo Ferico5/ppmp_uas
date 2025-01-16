@@ -70,7 +70,12 @@ class _ShowDetailQueuesPageState extends State<ShowDetailQueuesPage> {
                   text: queue['pasienName'] ?? 'Unknown Name',
                   buttonText: "Detail",
                   onPressed: () {
-                    Navigator.pushNamed(context, "queuePage");
+                    final queueId = queue['id'];
+                    Navigator.pushNamed(
+                      context,
+                      "queuePage",
+                      arguments: {'id': queueId},
+                    );
                   },
                   animationIndex: index + 1,
                 );
