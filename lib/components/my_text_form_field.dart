@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import '../flutter_flow/flutter_flow_theme.dart';
+import 'package:flutter/services.dart';
 
 class MyTextFormField extends StatelessWidget {
   final String labelText;
@@ -12,6 +12,8 @@ class MyTextFormField extends StatelessWidget {
   final Widget? suffixIcon;
   final double? width;
   final TextStyle? style; // add the style
+  final List<TextInputFormatter>? inputFormatters;
+
   const MyTextFormField({
     super.key,
     required this.labelText,
@@ -23,7 +25,8 @@ class MyTextFormField extends StatelessWidget {
     this.validator,
     this.suffixIcon,
     this.width,
-    this.style, //Add the style to the constructor
+    this.style,
+    this.inputFormatters,
   });
 
   @override
@@ -36,6 +39,7 @@ class MyTextFormField extends StatelessWidget {
         obscureText: obscureText,
         onChanged: onChanged,
         validator: validator,
+        inputFormatters: inputFormatters,
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: const TextStyle(
