@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/show_detail_queues_view_model.dart';
-import '../components/detail_card.dart';
+import '../components/detail_card_queue.dart';
 
 class ShowDetailQueuesPage extends StatefulWidget {
   const ShowDetailQueuesPage({super.key});
@@ -10,13 +10,19 @@ class ShowDetailQueuesPage extends StatefulWidget {
   State<ShowDetailQueuesPage> createState() => _ShowDetailQueuesPageState();
 }
 
-class _ShowDetailQueuesPageState extends State<ShowDetailQueuesPage>
-    with TickerProviderStateMixin {
+class _ShowDetailQueuesPageState extends State<ShowDetailQueuesPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() =>
+        Provider.of<ShowDetailQueuesViewModel>(context, listen: false)
+            .fetchQueues());
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => ShowDetailQueuesViewModel(),
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: const Color(0xFF1E2429),
         appBar: AppBar(
           backgroundColor: const Color(0xFF00A896),
@@ -43,55 +49,34 @@ class _ShowDetailQueuesPageState extends State<ShowDetailQueuesPage>
         ),
         body: SafeArea(
           top: true,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Expanded(
-                child: ListView(children: [
-                  Consumer<ShowDetailQueuesViewModel>(
-                      builder: (context, model, child) {
-                        return DetailCard(
-                          text: "<Nama Pasien, Nomor Antrian>",
-                          buttonText: "Detail",
-                          onPressed: () {
-                            Navigator.pushNamed(context, "queuePage");
-                          },
-                        );
-                      }),
-                  Consumer<ShowDetailQueuesViewModel>(
-                      builder: (context, model, child) {
-                        return DetailCard(
-                          text: "<Nama Pasien, Nomor Antrian>",
-                          buttonText: "Detail",
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                        );
-                      }),
-                  Consumer<ShowDetailQueuesViewModel>(
-                      builder: (context, model, child) {
-                        return DetailCard(
-                          text: "<Nama Pasien, Nomor Antrian>",
-                          buttonText: "Detail",
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                        );
-                      }),
-                  Consumer<ShowDetailQueuesViewModel>(
-                      builder: (context, model, child) {
-                        return DetailCard(
-                          text: "<Nama Pasien, Nomor Antrian>",
-                          buttonText: "Detail",
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                        );
-                      }),
-                ]),
-              ),
-            ],
-          ),
+          child: Consumer<ShowDetailQueuesViewModel>(
+          builder: (context, viewModel, child) {
+            if (viewModel.model.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (viewModel.model.error != null) {
+              return Center(child: Text(viewModel.model.error!));
+            }
+            if (viewModel.model.queues.isEmpty) {
+              return const Center(child: Text("No queues available."));
+            }
+            return ListView.builder(
+              itemCount: viewModel.model.queues.length,
+              itemBuilder: (context, index) {
+                final queue = viewModel.model.queues[index];
+                return DetailCardQueue(
+                  patientName: queue['pasienName'] ?? 'Unknown Name',
+                  queueNumber: queue['no_antrian'].toString(),
+                  text: queue['pasienName'] ?? 'Unknown Name',
+                  buttonText: "Detail",
+                  onPressed: () {
+                    Navigator.pushNamed(context, "queuePage");
+                  },
+                  animationIndex: index + 1,
+                );
+              },
+            );
+          },
         ),
       ),
     );

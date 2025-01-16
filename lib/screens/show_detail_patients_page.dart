@@ -14,7 +14,7 @@ class _ShowDetailPatientsPageState extends State<ShowDetailPatientsPage> {
   @override
   void initState() {
     super.initState();
-    // Memanggil fetchPatients saat halaman diinisialisasi
+    
     Future.microtask(() =>
         Provider.of<ShowDetailPatientsViewModel>(context, listen: false)
             .fetchPatients());
