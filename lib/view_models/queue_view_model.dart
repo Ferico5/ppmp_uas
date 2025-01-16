@@ -47,7 +47,7 @@ class QueueViewModel extends ChangeNotifier {
       }
 
       final response = await Dio().get(
-        'http://10.0.2.2:8000/api/tabel_pasien/$patientId',
+        'http://10.0.2.2:8000/api/table_pasien/$patientId',
         options: Options(
           headers: {
             'Authorization': 'Token $token',
@@ -56,7 +56,7 @@ class QueueViewModel extends ChangeNotifier {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        _model.patient = response.data['name'] ?? 'Unknown Name';
+        _model.patient = response.data['data']['nama'] ?? 'Unknown Name';
       }
     } catch (e) {
       _model.patient = 'Error fetching name';
@@ -85,7 +85,7 @@ class QueueViewModel extends ChangeNotifier {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        _model.doctor = response.data['name'] ?? 'Unknown Name';
+        _model.doctor = response.data['data']['nama'] ?? 'Unknown Name';
       }
     } catch (e) {
       _model.doctor = 'Error fetching name';
