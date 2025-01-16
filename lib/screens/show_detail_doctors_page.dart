@@ -68,7 +68,12 @@ class _ShowDetailDoctorsPageState extends State<ShowDetailDoctorsPage> {
                   text: doctor['nama'] ?? 'Unknown Name',
                   buttonText: "Detail",
                   onPressed: () {
-                    Navigator.pushNamed(context, "doctorPage");
+                    final doctorId = doctor['id'];
+                    Navigator.pushNamed(
+                      context,
+                      "doctorPage",
+                      arguments: {'id': doctorId},
+                    );
                   },
                   animationIndex: index + 1,
                 );

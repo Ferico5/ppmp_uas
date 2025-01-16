@@ -10,13 +10,27 @@ class DoctorPage extends StatefulWidget {
   State<DoctorPage> createState() => _DoctorPageState();
 }
 
-class _DoctorPageState extends State<DoctorPage>
-    with TickerProviderStateMixin {
+class _DoctorPageState extends State<DoctorPage> with TickerProviderStateMixin {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Ambil ID dari arguments
+    final arguments =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final doctorId = arguments?['id'];
+
+    if (doctorId != null) {
+      Future.microtask(() {
+        Provider.of<DoctorViewModel>(context, listen: false)
+            .fetchDoctorById(doctorId);
+      });
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => DoctorViewModel(),
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: const Color(0xFF1E2429),
         appBar: AppBar(
           backgroundColor: const Color(0xFF00A896),
@@ -46,30 +60,40 @@ class _DoctorPageState extends State<DoctorPage>
           elevation: 2,
         ),
         body: SafeArea(
-          top: true,
-          child: Consumer<DoctorViewModel>(
-            builder: (context, model, child) {
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    InfoCardDoctor(
-                      name: "name",
-                      phoneNumber: "123",
-                      email: "email",
-                      updateOnPressed: () {
-                        Navigator.pushNamed(
-                            context, 'updateDoctorPage');
-                      },
-                      deleteOnPressed: () {
-                        model.delete(context);
-                      },
-                    ),
-                  ],
+        top: true,
+        child: Consumer<DoctorViewModel>(
+          builder: (context, viewModel, child) {
+            if (viewModel.model.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (viewModel.model.error != null) {
+              return Center(
+                child: Text(
+                  viewModel.model.error!,
+                  style: const TextStyle(color: Colors.red),
                 ),
               );
-            },
-          ),
+            }
+
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  InfoCardDoctor(
+                    name: viewModel.model.name,
+                    phoneNumber: viewModel.model.phoneNumber,
+                    email: viewModel.model.email,
+                    updateOnPressed: () {
+                      Navigator.pushNamed(context, 'updateDoctorPage');
+                    },
+                    deleteOnPressed: () {
+                      viewModel.delete(context);
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

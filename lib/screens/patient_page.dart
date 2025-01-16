@@ -20,17 +20,11 @@ class _PatientPageState extends State<PatientPage> with TickerProviderStateMixin
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final patientId = arguments?['id'];
 
-    print("Arguments received in PatientPage: $arguments");
-
     if (patientId != null) {
-      print('Fetching data for patient ID: $patientId');
-      // Panggil fungsi fetch data pasien berdasarkan ID
       Future.microtask(() {
         Provider.of<PatientViewModel>(context, listen: false)
             .fetchPatientById(patientId);
       });
-    } else {
-      print('No patient ID provided in arguments.');
     }
   }
 

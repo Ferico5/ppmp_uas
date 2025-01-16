@@ -72,7 +72,6 @@ class LoginViewModel extends ChangeNotifier {
 
     } on DioError catch (e) {
       if (e.response != null) {
-        print('Error response: ${e.response?.data}');
         setError('An error occurred: ${e.response?.data}');
       } else {
         setError('Failed to connect to the server');
