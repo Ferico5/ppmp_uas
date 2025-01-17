@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'view_models/show_detail_patients_view_model.dart';
 import 'view_models/show_detail_doctors_view_model.dart';
 import 'view_models/show_detail_queues_view_model.dart';
@@ -21,10 +22,17 @@ import 'screens/show_detail_queues_page.dart';
 import 'screens/queue_page.dart';
 import 'screens/update_queue_page.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('authToken'); // Ambil token dari SharedPreferences
+  runApp(MyApp(token: token));
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String? token;
+
+  const MyApp({super.key, this.token});
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +66,11 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const LoginPage(),
           'homePage': (context) => const HomePage(),
-          'newPatientPage': (context) => const NewPatientPage(),
+          'newPatientPage': (context) => NewPatientPage(token: token ?? ""),
           'showDetailPatientsPage': (context) => const ShowDetailPatientsPage(),
           'patientPage': (context) => const PatientPage(),
           'updatePatientPage': (context) => const UpdatePatientPage(),
-          'newDoctorPage': (context) => const NewDoctorPage(),
+          'newDoctorPage': (context) => NewDoctorPage(token: token ?? ""),
           'showDetailDoctorsPage': (context) => const ShowDetailDoctorsPage(),
           'doctorPage': (context) => const DoctorPage(),
           'updateDoctorPage': (context) => const UpdateDoctorPage(),

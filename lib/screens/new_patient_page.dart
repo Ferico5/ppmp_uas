@@ -1,16 +1,14 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 import '../view_models/new_patient_view_model.dart';
 import '../components/my_text_form_field.dart';
 import '../components/my_button.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NewPatientPage extends StatefulWidget {
-  const NewPatientPage({super.key});
+  final String token;
+  const NewPatientPage({super.key, required this.token});
 
   @override
   State<NewPatientPage> createState() => _NewPatientPageState();
@@ -22,11 +20,6 @@ class _NewPatientPageState extends State<NewPatientPage> {
   final _addressController = TextEditingController();
   final _phoneNumberController = TextEditingController();
   final _emailController = TextEditingController();
-  final _nameFocusNode = FocusNode();
-  final _ageFocusNode = FocusNode();
-  final _addressFocusNode = FocusNode();
-  final _phoneNumberFocusNode = FocusNode();
-  final _emailFocusNode = FocusNode();
   final _formKey = GlobalKey<FormState>();
   String? _dropdownValue;
 
@@ -37,82 +30,20 @@ class _NewPatientPageState extends State<NewPatientPage> {
     _addressController.dispose();
     _phoneNumberController.dispose();
     _emailController.dispose();
-    _nameFocusNode.dispose();
-    _ageFocusNode.dispose();
-    _addressFocusNode.dispose();
-    _phoneNumberFocusNode.dispose();
-    _emailFocusNode.dispose();
     super.dispose();
-  }
-
-  Future<void> submitPatientData(BuildContext context) async {
-    final viewModel = Provider.of<NewPatientViewModel>(context, listen: false);
-    viewModel.setLoading(true);
-    viewModel.setError(null);
-
-    if (!_formKey.currentState!.validate()) {
-      viewModel.setLoading(false);
-      return;
-    }
-
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('authToken');
-
-      if (token == null) {
-        viewModel.setError('You are not authenticated. Please log in again.');
-        viewModel.setLoading(false);
-        return;
-      }
-
-      final data = {
-        "nama": viewModel.model.name,
-        "umur": int.tryParse(viewModel.model.age) ?? 0,
-        "gender": viewModel.model.gender ?? "Male",
-        "alamat": viewModel.model.address,
-        "no_telp": viewModel.model.phoneNumber,
-        "email": viewModel.model.email,
-      };
-
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/table_pasien'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Token $token',
-        },
-        body: jsonEncode(data),
-      );
-
-      if (response.statusCode == 201) {
-        viewModel.setLoading(false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Data berhasil disimpan")),
-        );
-        Navigator.pushReplacementNamed(context, 'showDetailPatientsPage');
-      } else {
-        viewModel.setError("Gagal mengirim data: ${response.body}");
-      }
-    } catch (e) {
-      viewModel.setError("Terjadi kesalahan: $e");
-    } finally {
-      viewModel.setLoading(false);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => NewPatientViewModel(),
+      create: (_) => NewPatientViewModel(),
       child: Scaffold(
         backgroundColor: const Color(0xFF1E2429),
         appBar: AppBar(
           backgroundColor: const Color(0xFF00A896),
           automaticallyImplyLeading: false,
           leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
           title: const Text(
@@ -126,14 +57,14 @@ class _NewPatientPageState extends State<NewPatientPage> {
           centerTitle: true,
           elevation: 2,
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Consumer<NewPatientViewModel>(
-                builder: (context, model, child) {
-                  return Column(
+        body: Consumer<NewPatientViewModel>(
+          builder: (context, viewModel, child) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
@@ -148,10 +79,10 @@ class _NewPatientPageState extends State<NewPatientPage> {
                       const SizedBox(height: 20),
                       MyTextFormField(
                         controller: _nameController,
-                        focusNode: _nameFocusNode,
+                        focusNode: FocusNode(),
                         hintText: "Name...",
                         labelText: "Name",
-                        onChanged: model.setName,
+                        onChanged: viewModel.setName,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter the name";
@@ -162,10 +93,10 @@ class _NewPatientPageState extends State<NewPatientPage> {
                       const SizedBox(height: 16),
                       MyTextFormField(
                         controller: _ageController,
-                        focusNode: _ageFocusNode,
+                        focusNode: FocusNode(),
                         hintText: "Age...",
                         labelText: "Age",
-                        onChanged: model.setAge,
+                        onChanged: viewModel.setAge,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter the age";
@@ -185,7 +116,7 @@ class _NewPatientPageState extends State<NewPatientPage> {
                         onChanged: (value) {
                           setState(() {
                             _dropdownValue = value;
-                            model.setGender(value);
+                            viewModel.setGender(value);
                           });
                         },
                         decoration: const InputDecoration(
@@ -196,10 +127,10 @@ class _NewPatientPageState extends State<NewPatientPage> {
                       const SizedBox(height: 16),
                       MyTextFormField(
                         controller: _addressController,
-                        focusNode: _addressFocusNode,
+                        focusNode: FocusNode(),
                         hintText: "Address...",
                         labelText: "Address",
-                        onChanged: model.setAddress,
+                        onChanged: viewModel.setAddress,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter the address";
@@ -210,10 +141,10 @@ class _NewPatientPageState extends State<NewPatientPage> {
                       const SizedBox(height: 16),
                       MyTextFormField(
                         controller: _phoneNumberController,
-                        focusNode: _phoneNumberFocusNode,
+                        focusNode: FocusNode(),
                         hintText: "Phone Number...",
                         labelText: "Phone Number",
-                        onChanged: model.setPhoneNumber,
+                        onChanged: viewModel.setPhoneNumber,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter the phone number";
@@ -225,10 +156,10 @@ class _NewPatientPageState extends State<NewPatientPage> {
                       const SizedBox(height: 16),
                       MyTextFormField(
                         controller: _emailController,
-                        focusNode: _emailFocusNode,
+                        focusNode: FocusNode(),
                         hintText: "Email...",
                         labelText: "Email",
-                        onChanged: model.setEmail,
+                        onChanged: viewModel.setEmail,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter the email";
@@ -237,22 +168,24 @@ class _NewPatientPageState extends State<NewPatientPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      if (model.model.error != null)
+                      if (viewModel.model.error != null)
                         Text(
-                          model.model.error!,
+                          viewModel.model.error!,
                           style: const TextStyle(color: Colors.red),
                         ),
                       Center(
                         child: MyButton(
                           text: "Submit",
-                          onPressed: () => submitPatientData(context),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              viewModel.postData(context, widget.token);
+                            }
+                          },
                           backgroundColor: const Color(0xFF00A896),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 0),
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      if (model.model.isLoading)
+                      if (viewModel.model.isLoading)
                         const Center(
                           child: SpinKitCircle(
                             color: Colors.white,
@@ -260,11 +193,11 @@ class _NewPatientPageState extends State<NewPatientPage> {
                           ),
                         ),
                     ],
-                  );
-                },
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

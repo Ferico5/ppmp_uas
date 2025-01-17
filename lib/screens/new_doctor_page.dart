@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import '../view_models/new_doctor_view_model.dart';
 import '../components/my_text_form_field.dart';
 import '../components/my_button.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class NewDoctorPage extends StatefulWidget {
-  const NewDoctorPage({super.key});
+  final String token;
+  const NewDoctorPage({super.key, required this.token});
 
   @override
   State<NewDoctorPage> createState() => _NewDoctorPageState();
@@ -16,224 +18,134 @@ class _NewDoctorPageState extends State<NewDoctorPage> {
   final _nameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
   final _emailController = TextEditingController();
-  final _nameFocusNode = FocusNode();
-  final _phoneNumberFocusNode = FocusNode();
-  final _emailFocusNode = FocusNode();
   final _formKey = GlobalKey<FormState>();
-  // String? _dropdownValue;
+  String? _dropdownValue;
 
   @override
   void dispose() {
     _nameController.dispose();
     _phoneNumberController.dispose();
     _emailController.dispose();
-    _nameFocusNode.dispose();
-    _phoneNumberFocusNode.dispose();
-    _emailFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => NewDoctorViewModel(),
+      create: (_) => NewDoctorViewModel(),
       child: Scaffold(
         backgroundColor: const Color(0xFF1E2429),
         appBar: AppBar(
           backgroundColor: const Color(0xFF00A896),
           automaticallyImplyLeading: false,
           leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
-          title: const Align(
-            alignment: AlignmentDirectional(-1, -1),
-            child: Text(
-              "Add New Doctor",
-              style: TextStyle(
-                fontFamily: 'Lexend',
-                color: Colors.white,
-                fontSize: 22,
-                letterSpacing: 0.0,
-              ),
+          title: const Text(
+            "Add New Doctor",
+            style: TextStyle(
+              fontFamily: 'Lexend',
+              color: Colors.white,
+              fontSize: 22,
             ),
           ),
           centerTitle: true,
           elevation: 2,
         ),
-        body: Align(
-          alignment: AlignmentDirectional(-1, -1),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Align(
-                      alignment: AlignmentDirectional(0, -1),
-                      child: const Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                        child: Text(
-                          "Insert New Data Doctor",
-                          style: TextStyle(
-                            fontFamily: 'Lexend',
-                            fontSize: 18,
-                            letterSpacing: 0.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(-1, -1),
-                      child: const Text(
-                        "Name :",
+        body: Consumer<NewDoctorViewModel>(
+          builder: (context, viewModel, child) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Insert New Data Doctor",
                         style: TextStyle(
                           fontFamily: 'Lexend',
-                          fontSize: 17,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                    ),
-                    Consumer<NewDoctorViewModel>(
-                      builder: (context, model, child) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0), // Menambahkan padding bawah
-                          child: MyTextFormField(
-                            controller: _nameController,
-                            focusNode: _nameFocusNode,
-                            hintText: "Name...",
-                            labelText: "",
-                            onChanged: model.setName,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter the name";
-                              }
-                              return null;
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(-1, -1),
-                      child: const Text(
-                        "Phone Number :",
-                        style: TextStyle(
-                          fontFamily: 'Lexend',
-                          fontSize: 17,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Consumer<NewDoctorViewModel>(
-                      builder: (context, model, child) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0), // Menambahkan padding bawah
-                          child: MyTextFormField(
-                            controller: _phoneNumberController,
-                            focusNode: _phoneNumberFocusNode,
-                            hintText: "Phone Number...",
-                            labelText: "",
-                            onChanged: model.setPhoneNumber,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter the phone number";
-                              }
-                              return null;
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(-1, -1),
-                      child: const Text(
-                        "Email :",
-                        style: TextStyle(
-                          fontFamily: 'Lexend',
-                          fontSize: 17,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Consumer<NewDoctorViewModel>(
-                      builder: (context, model, child) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0), // Menambahkan padding bawah
-                          child: MyTextFormField(
-                            controller: _emailController,
-                            focusNode: _emailFocusNode,
-                            hintText: "Email...",
-                            labelText: "",
-                            onChanged: model.setEmail,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter the email";
-                              }
-                              return null;
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    Padding(
-                      padding:
-                      const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 40),
-                      child: Consumer<NewDoctorViewModel>(
-                        builder: (context, model, child) {
-                          return Column(
-                            children: [
-                              if (model.model.error != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: Text(model.model.error ?? "",
-                                      style: const TextStyle(
-                                          color: Colors.red, fontSize: 14)),
-                                ),
-                              MyButton(
-                                text: "Submit",
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    model.submit(context);
-                                  }
-                                },
-                                backgroundColor: const Color(0xFF00A896),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 0),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              if (model.model.isLoading)
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 10),
-                                  child: SpinKitCircle(
-                                    color: Colors.white,
-                                    size: 50.0,
-                                  ),
-                                ),
-                            ],
-                          );
+                      const SizedBox(height: 20),
+                      MyTextFormField(
+                        controller: _nameController,
+                        focusNode: FocusNode(),
+                        hintText: "Name...",
+                        labelText: "Name",
+                        onChanged: viewModel.setName,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter the name";
+                          }
+                          return null;
                         },
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      MyTextFormField(
+                        controller: _phoneNumberController,
+                        focusNode: FocusNode(),
+                        hintText: "Phone Number...",
+                        labelText: "Phone Number",
+                        onChanged: viewModel.setPhoneNumber,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter the phone number";
+                          }
+                          return null;
+                        },
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      ),
+                      const SizedBox(height: 16),
+                      MyTextFormField(
+                        controller: _emailController,
+                        focusNode: FocusNode(),
+                        hintText: "Email...",
+                        labelText: "Email",
+                        onChanged: viewModel.setEmail,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter the email";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      if (viewModel.model.error != null)
+                        Text(
+                          viewModel.model.error!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      Center(
+                        child: MyButton(
+                          text: "Submit",
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              viewModel.postData(context, widget.token);
+                            }
+                          },
+                          backgroundColor: const Color(0xFF00A896),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      if (viewModel.model.isLoading)
+                        const Center(
+                          child: SpinKitCircle(
+                            color: Colors.white,
+                            size: 50.0,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

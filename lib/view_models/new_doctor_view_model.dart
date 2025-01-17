@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/new_doctor_model.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class NewDoctorViewModel extends ChangeNotifier {
   final NewDoctorModel _model = NewDoctorModel();
@@ -31,9 +33,10 @@ class NewDoctorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> submit(BuildContext context) async {
+  Future<void> postData(BuildContext context, String token) async {
     setLoading(true);
     setError(null);
+
     if (_model.name.isEmpty ||
         _model.phoneNumber.isEmpty ||
         _model.email.isEmpty) {
@@ -41,11 +44,37 @@ class NewDoctorViewModel extends ChangeNotifier {
       setLoading(false);
       return;
     }
-    //TODO: Submit data
-    await Future.delayed(const Duration(seconds: 2));
-    setLoading(false);
-    //Navigate to the next screen
-    Navigator.pushReplacementNamed(context,
-        'showDetailDoctorsPage');
+
+    final url = Uri.parse('http://10.0.2.2:8000/api/table_dokter');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token $token',
+    };
+
+    final body = jsonEncode({
+      'nama': _model.name,
+      'no_telp': _model.phoneNumber,
+      'email': _model.email,
+    });
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+
+      if (response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(data['message']),
+          backgroundColor: Colors.green,
+        ));
+        Navigator.pushReplacementNamed(context, 'showDetailDoctorsPage');
+      } else {
+        final errorData = jsonDecode(response.body);
+        setError(errorData['message'] ?? 'Something went wrong');
+      }
+    } catch (e) {
+      setError("Failed to connect to the server");
+    } finally {
+      setLoading(false);
+    }
   }
 }
