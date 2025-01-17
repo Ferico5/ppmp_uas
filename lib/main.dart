@@ -22,6 +22,8 @@ import 'screens/show_detail_queues_page.dart';
 import 'screens/queue_page.dart';
 import 'screens/update_queue_page.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();

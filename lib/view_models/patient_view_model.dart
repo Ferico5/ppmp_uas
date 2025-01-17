@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/patient_model.dart';
+import '../view_models/show_detail_patients_view_model.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,7 +48,7 @@ class PatientViewModel extends ChangeNotifier {
         'http://10.0.2.2:8000/api/table_pasien/$patientId',
         options: Options(
           headers: {
-            'Authorization': 'Token $token', // Gunakan token dari SharedPreferences
+            'Authorization': 'Token $token',
           },
         ),
       );
@@ -67,8 +69,50 @@ class PatientViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> delete(BuildContext context) async {
-    // TODO: Implement delete logic if needed
-    await Future.delayed(const Duration(seconds: 2));
+  Future<void> deletePatientById(BuildContext context, int patientId) async {
+    setLoading(true);
+    setError(null);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken');
+
+      if (token == null) {
+        setError('You are not authenticated. Please log in again.');
+        setLoading(false);
+        return;
+      }
+
+      final response = await Dio().delete(
+        'http://10.0.2.2:8000/api/table_pasien/$patientId',
+        options: Options(
+          headers: {
+            'Authorization': 'Token $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        Provider.of<ShowDetailPatientsViewModel>(context, listen: false).model.patients.removeWhere((patient) => patient['id'] == patientId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.data['message'] ?? 'Patient deleted successfully.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        await Provider.of<ShowDetailPatientsViewModel>(context, listen: false).fetchPatients();
+        Navigator.pop(context); // Kembali ke halaman sebelumnya
+      } else {
+        setError('Failed to delete patient.');
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        setError('Error: ${e.response?.data}');
+      } else {
+        setError('Failed to connect to the server.');
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 }

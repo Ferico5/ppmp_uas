@@ -28,7 +28,6 @@ class ShowDetailPatientsViewModel extends ChangeNotifier {
     setError(null);
 
     try {
-      // Ambil token dari SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken');
 

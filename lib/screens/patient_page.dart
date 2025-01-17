@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/patient_view_model.dart';
 import '../components/info_card_patient.dart';
+import '../view_models/show_detail_patients_view_model.dart';
 
 class PatientPage extends StatefulWidget {
   const PatientPage({super.key});
@@ -11,19 +12,20 @@ class PatientPage extends StatefulWidget {
 }
 
 class _PatientPageState extends State<PatientPage> with TickerProviderStateMixin {
+  int? patientId;
+  
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Ambil ID dari arguments
     final arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final patientId = arguments?['id'];
+    patientId = arguments?['id'];
 
     if (patientId != null) {
       Future.microtask(() {
         Provider.of<PatientViewModel>(context, listen: false)
-            .fetchPatientById(patientId);
+            .fetchPatientById(patientId!);
       });
     }
   }
@@ -84,9 +86,61 @@ class _PatientPageState extends State<PatientPage> with TickerProviderStateMixin
                     updateOnPressed: () {
                       Navigator.pushNamed(context, 'updatePatientPage');
                     },
-                    deleteOnPressed: () {
-                      viewModel.delete(context);
-                    },
+                    deleteOnPressed: () async {
+  if (patientId != null) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Delete Patient"),
+          content: const Text("Are you sure you want to delete this patient?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context); // Close the dialog
+                // Set loading to true
+                Provider.of<PatientViewModel>(context, listen: false).setLoading(true);
+
+                try {
+                  await Provider.of<PatientViewModel>(context, listen: false)
+                      .deletePatientById(context, patientId!);
+                  // After successful deletion, refresh data
+                  await Provider.of<ShowDetailPatientsViewModel>(context, listen: false)
+                      .fetchPatients();
+                  // Navigate back to the ShowDetailPatientsPage
+                  Navigator.pushReplacementNamed(context, 'showDetailPatientsPage');
+                } catch (error) {
+                  // Show error message if deletion fails
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to delete patient: $error'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } finally {
+                  // Set loading to false once the operation completes
+                  Provider.of<PatientViewModel>(context, listen: false).setLoading(false);
+                }
+              },
+              child: const Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Patient ID is not available.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
                   ),
                 ],
               ),
