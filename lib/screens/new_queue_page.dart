@@ -14,306 +14,146 @@ class NewQueuePage extends StatefulWidget {
 
 class _NewQueuePageState extends State<NewQueuePage> {
   final _queueNoController = TextEditingController();
-  final _queueStatusController = TextEditingController();
-  final _createdOnController = TextEditingController();
-  final _patientController = TextEditingController();
-  final _doctorController = TextEditingController();
-  final _queueNoFocusNode = FocusNode();
-  final _queueStatusFocusNode = FocusNode();
-  final _createdOnFocusNode = FocusNode();
-  final _patientFocusNode = FocusNode();
-  final _doctorFocusNode = FocusNode();
   final _formKey = GlobalKey<FormState>();
-  String? _dropdownValue;
+  String? _dropdownPatient;
+  String? _dropdownDoctor;
 
   @override
   void dispose() {
     _queueNoController.dispose();
-    _queueStatusController.dispose();
-    _createdOnController.dispose();
-    _patientController.dispose();
-    _doctorController.dispose();
-    _queueNoFocusNode.dispose();
-    _queueStatusFocusNode.dispose();
-    _createdOnFocusNode.dispose();
-    _patientFocusNode.dispose();
-    _doctorFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => NewQueueViewModel(),
-      child: Scaffold(
-        backgroundColor: const Color(0xFF1E2429),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFF00A896),
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: Colors.white,
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: const Align(
-            alignment: AlignmentDirectional(-1, -1),
-            child: Text(
-              "Add New Queue",
-              style: TextStyle(
-                fontFamily: 'Lexend',
-                color: Colors.white,
-                fontSize: 22,
-                letterSpacing: 0.0,
+      create: (context) => NewQueueViewModel()..loadData()..loadNextQueueNo(),
+      child: Consumer<NewQueueViewModel>(
+        builder: (context, model, child) {
+          final String nextQueueNo = model.model.queue_no;
+
+          if (_queueNoController.text.isEmpty) {
+            _queueNoController.text = nextQueueNo;
+          }
+
+          return Scaffold(
+            backgroundColor: const Color(0xFF1E2429),
+            appBar: AppBar(
+              backgroundColor: const Color(0xFF00A896),
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_rounded,
+                  color: Colors.white,
+                ),
+                onPressed: () => Navigator.pop(context),
               ),
+              title: const Align(
+                alignment: AlignmentDirectional(-1, -1),
+                child: Text(
+                  "Add New Queue",
+                  style: TextStyle(
+                    fontFamily: 'Lexend',
+                    color: Colors.white,
+                    fontSize: 22,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+              ),
+              centerTitle: true,
+              elevation: 2,
             ),
-          ),
-          centerTitle: true,
-          elevation: 2,
-        ),
-        body: Align(
-          alignment: AlignmentDirectional(-1, -1),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Align(
-                      alignment: AlignmentDirectional(0, -1),
-                      child: const Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                        child: Text(
-                          "Insert New Data Queue",
-                          style: TextStyle(
-                            fontFamily: 'Lexend',
-                            fontSize: 18,
-                            letterSpacing: 0.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(-1, -1),
-                      child: const Text(
-                        "Queue No. :",
-                        style: TextStyle(
-                          fontFamily: 'Lexend',
-                          fontSize: 17,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Consumer<NewQueueViewModel>(
-                      builder: (context, model, child) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0), // Menambahkan padding bawah
-                          child: MyTextFormField(
-                            controller: _queueNoController,
-                            focusNode: _queueNoFocusNode,
-                            hintText: "Queue Number...",
-                            labelText: "",
-                            onChanged: model.setQueueNo,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter the queue number";
-                              }
-                              return null;
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(-1, -1),
-                      child: const Text(
-                        "Queue Status :",
-                        style: TextStyle(
-                          fontFamily: 'Lexend',
-                          fontSize: 17,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(-1, 0),
-                      child: Consumer<NewQueueViewModel>(
-                        builder: (context, model, child) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0), // Menambahkan padding bawah
-                            child: DropdownButtonFormField<String>(
-                              decoration: InputDecoration(
-                                hintText: 'Select...',
-                                hintStyle: const TextStyle(
-                                  fontFamily: 'Lexend',
-                                  fontSize: 15,
-                                  letterSpacing: 0.0,
-                                  color: Colors.white,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFF00A896),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Colors.transparent,
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                filled: true,
-                                fillColor: Colors.white12,
-                                contentPadding:
-                                const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+            body: Align(
+              alignment: AlignmentDirectional(-1, -1),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Align(
+                          alignment: AlignmentDirectional(0, -1),
+                          child: const Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                            child: Text(
+                              "Insert New Data Queue",
+                              style: TextStyle(
+                                fontFamily: 'Lexend',
+                                fontSize: 18,
+                                letterSpacing: 0.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
-                              value: _dropdownValue,
-                              items: const [
-                                DropdownMenuItem(
-                                  value: 'Waiting',
-                                  child: Text('Waiting'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'Called',
-                                  child: Text('Called'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'Finished',
-                                  child: Text('Finished'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'Canceled',
-                                  child: Text('Canceled'),
-                                ),
-                              ],
-                              onChanged: (value) {
-                                setState(() {
-                                  _dropdownValue = value;
-                                  model.setQueueStatus(value ?? "Waiting");
-                                });
-                              },
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(-1, -1),
-                      child: const Text(
-                        "Created On :",
-                        style: TextStyle(
-                          fontFamily: 'Lexend',
-                          fontSize: 17,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Consumer<NewQueueViewModel>(
-                      builder: (context, model, child) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0), // Menambahkan padding bawah
-                          child: MyTextFormField(
-                            controller: _createdOnController,
-                            focusNode: _createdOnFocusNode,
-                            hintText: "Created On...",
-                            labelText: "",
-                            onChanged: model.setCreatedOn,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter the address";
-                              }
-                              return null;
-                            },
                           ),
-                        );
-                      },
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(-1, -1),
-                      child: const Text(
-                        "Patient :",
-                        style: TextStyle(
-                          fontFamily: 'Lexend',
-                          fontSize: 17,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
                         ),
-                      ),
-                    ),
-                    Consumer<NewQueueViewModel>(
-                      builder: (context, model, child) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0), // Menambahkan padding bawah
-                          child: MyTextFormField(
-                            controller: _patientController,
-                            focusNode: _patientFocusNode,
-                            hintText: "Patient...",
-                            labelText: "",
-                            onChanged: model.setPatient,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter the phone number";
-                              }
-                              return null;
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(-1, -1),
-                      child: const Text(
-                        "Doctor :",
-                        style: TextStyle(
-                          fontFamily: 'Lexend',
-                          fontSize: 17,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                        const SizedBox(height: 16),
+                        MyTextFormField(
+                          controller: _queueNoController,
+                          focusNode: FocusNode(),
+                          hintText: "Queue Number...",
+                          labelText: "",
+                          obscureText: false,
+                          validator: null,
+                          style: TextStyle(color: Colors.white),
+                          readOnly: true,
                         ),
-                      ),
-                    ),
-                    Consumer<NewQueueViewModel>(
-                      builder: (context, model, child) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0), // Menambahkan padding bawah
-                          child: MyTextFormField(
-                            controller: _doctorController,
-                            focusNode: _doctorFocusNode,
-                            hintText: "Doctor...",
-                            labelText: "",
-                            onChanged: model.setDoctor,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter the email";
-                              }
-                              return null;
-                            },
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<Map<String, dynamic>>(
+                          decoration: const InputDecoration(
+                            hintText: 'Select Patient...',
+                            filled: true,
+                            fillColor: Colors.white12,
                           ),
-                        );
-                      },
-                    ),
-                    Padding(
-                      padding:
-                      const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 40),
-                      child: Consumer<NewQueueViewModel>(
-                        builder: (context, model, child) {
-                          return Column(
+                          value: _dropdownPatient != null
+                              ? model.patients.firstWhere(
+                                  (patient) => patient['nama'] == _dropdownPatient,
+                                  orElse: () => {})
+                              : null,
+                          items: model.patients
+                              .map((patient) => DropdownMenuItem<Map<String, dynamic>>(
+                                    value: patient,
+                                    child: Text(patient['nama']),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _dropdownPatient = value?['nama'];
+                              model.setPatient(value?['id'].toString() ?? "");
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<Map<String, dynamic>>(
+                          decoration: const InputDecoration(
+                            hintText: 'Select Doctor...',
+                            filled: true,
+                            fillColor: Colors.white12,
+                          ),
+                          value: _dropdownDoctor != null
+                              ? model.doctors.firstWhere(
+                                  (doctor) => doctor['nama'] == _dropdownDoctor,
+                                  orElse: () => {})
+                              : null,
+                          items: model.doctors
+                              .map((doctor) => DropdownMenuItem<Map<String, dynamic>>(
+                                    value: doctor,
+                                    child: Text(doctor['nama']),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _dropdownDoctor = value?['nama'];
+                              model.setDoctor(value?['id'].toString() ?? "");
+                            });
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 40),
+                          child: Column(
                             children: [
                               if (model.model.error != null)
                                 Padding(
@@ -343,16 +183,16 @@ class _NewQueuePageState extends State<NewQueuePage> {
                                   ),
                                 ),
                             ],
-                          );
-                        },
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

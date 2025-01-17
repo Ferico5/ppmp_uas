@@ -13,6 +13,7 @@ class MyTextFormField extends StatelessWidget {
   final double? width;
   final TextStyle? style; // add the style
   final List<TextInputFormatter>? inputFormatters;
+  final bool? readOnly;
 
   const MyTextFormField({
     super.key,
@@ -27,6 +28,7 @@ class MyTextFormField extends StatelessWidget {
     this.width,
     this.style,
     this.inputFormatters,
+    this.readOnly,
   });
 
   @override
@@ -40,6 +42,7 @@ class MyTextFormField extends StatelessWidget {
         onChanged: onChanged,
         validator: validator,
         inputFormatters: inputFormatters,
+        readOnly: readOnly ?? false,
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: const TextStyle(
