@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/queue_view_model.dart';
 import '../components/info_card_queue.dart';
+import '../view_models/show_detail_queues_view_model.dart';
 
 class QueuePage extends StatefulWidget {
   const QueuePage({super.key});
@@ -11,19 +12,20 @@ class QueuePage extends StatefulWidget {
 }
 
 class _QueuePageState extends State<QueuePage> with TickerProviderStateMixin {
+  int? queueId;
+  
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Ambil ID dari arguments
     final arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final queueId = arguments?['id'];
+    queueId = arguments?['id'];
 
     if (queueId != null) {
       Future.microtask(() {
         Provider.of<QueueViewModel>(context, listen: false)
-            .fetchQueueById(queueId);
+            .fetchQueueById(queueId!);
       });
     }
   }
@@ -81,11 +83,81 @@ class _QueuePageState extends State<QueuePage> with TickerProviderStateMixin {
                     patient: viewModel.model.patient,
                     doctor: viewModel.model.doctor,
                     updateOnPressed: () {
-                      Navigator.pushNamed(
-                          context, 'updateQueuePage'); // Pass context
+                      Navigator.pushNamed(context, 'updateQueuePage');
                     },
-                    deleteOnPressed: () {
-                      viewModel.delete(context);
+                    deleteOnPressed: () async {
+                      if (queueId != null) {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Confirm Deletion'),
+                              content: const Text('Are you sure you want to delete this queue?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                  ),
+                                  child: const Text(
+                                    'Delete',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        if (confirm == true) {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          );
+
+                          try {
+                            await Provider.of<QueueViewModel>(context, listen: false)
+                                .deleteQueueById(context, queueId!);
+
+                            Navigator.pop(context);
+
+                            await Provider.of<ShowDetailQueuesViewModel>(context, listen: false)
+                                .fetchQueues();
+
+                            Navigator.pushReplacementNamed(context, 'showDetailQueuesPage');
+                          } catch (error) {
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed to delete queue: $error'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Queue ID is not available.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
                     },
                   ),
                 ],

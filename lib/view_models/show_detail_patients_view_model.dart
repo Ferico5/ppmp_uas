@@ -41,7 +41,7 @@ class ShowDetailPatientsViewModel extends ChangeNotifier {
         'http://10.0.2.2:8000/api/table_pasien',
         options: Options(
           headers: {
-            'Authorization': 'Token $token', // Gunakan token dari SharedPreferences
+            'Authorization': 'Token $token',
           },
         ),
       );

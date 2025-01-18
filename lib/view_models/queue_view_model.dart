@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/queue_model.dart';
+import '../view_models/show_detail_queues_view_model.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -158,8 +160,48 @@ class QueueViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> delete(BuildContext context) async {
-    // TODO: Implement delete logic if needed
-    await Future.delayed(const Duration(seconds: 2));
+  Future<void> deleteQueueById(BuildContext context, int queueId) async {
+    setLoading(true);
+    setError(null);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken');
+
+      if (token == null) {
+        setError('You are not authenticated. Please log in again.');
+        setLoading(false);
+        return;
+      }
+
+      final response = await Dio().delete(
+        'http://10.0.2.2:8000/api/table_antrian/$queueId',
+        options: Options(
+          headers: {
+            'Authorization': 'Token $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        Provider.of<ShowDetailQueuesViewModel>(context, listen: false).model.queues.removeWhere((queue) => queue['id'] == queueId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Queue deleted successfully.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        setError('Failed to delete queue.');
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        setError('Error: ${e.response?.data}');
+      } else {
+        setError('Failed to connect to the server.');
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 }
