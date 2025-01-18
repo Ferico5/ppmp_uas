@@ -108,7 +108,12 @@ class _PatientPageState extends State<PatientPage> with TickerProviderStateMixin
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                   ),
-                                  child: const Text('Delete'),
+                                  child: const Text(
+                                    'Delete',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               ],
                             );
