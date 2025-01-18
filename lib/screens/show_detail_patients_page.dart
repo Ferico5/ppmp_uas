@@ -32,7 +32,7 @@ class _ShowDetailPatientsPageState extends State<ShowDetailPatientsPage> {
             Icons.arrow_back_rounded,
             color: Colors.white,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pushReplacementNamed(context, 'homePage'),
         ),
         title: const Text(
           "Data Patients",

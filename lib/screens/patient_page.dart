@@ -87,60 +87,74 @@ class _PatientPageState extends State<PatientPage> with TickerProviderStateMixin
                       Navigator.pushNamed(context, 'updatePatientPage');
                     },
                     deleteOnPressed: () async {
-  if (patientId != null) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Delete Patient"),
-          content: const Text("Are you sure you want to delete this patient?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(context); // Close the dialog
-                // Set loading to true
-                Provider.of<PatientViewModel>(context, listen: false).setLoading(true);
+                      if (patientId != null) {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Confirm Deletion'),
+                              content: const Text('Are you sure you want to delete this patient?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                  ),
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
 
-                try {
-                  await Provider.of<PatientViewModel>(context, listen: false)
-                      .deletePatientById(context, patientId!);
-                  // After successful deletion, refresh data
-                  await Provider.of<ShowDetailPatientsViewModel>(context, listen: false)
-                      .fetchPatients();
-                  // Navigate back to the ShowDetailPatientsPage
-                  Navigator.pushReplacementNamed(context, 'showDetailPatientsPage');
-                } catch (error) {
-                  // Show error message if deletion fails
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Failed to delete patient: $error'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                } finally {
-                  // Set loading to false once the operation completes
-                  Provider.of<PatientViewModel>(context, listen: false).setLoading(false);
-                }
-              },
-              child: const Text("Delete"),
-            ),
-          ],
-        );
-      },
-    );
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Patient ID is not available.'),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-}
+                        if (confirm == true) {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          );
+
+                          try {
+                            await Provider.of<PatientViewModel>(context, listen: false)
+                                .deletePatientById(context, patientId!);
+
+                            Navigator.pop(context);
+
+                            await Provider.of<ShowDetailPatientsViewModel>(context, listen: false)
+                                .fetchPatients();
+
+                            Navigator.pushReplacementNamed(context, 'showDetailPatientsPage');
+                          } catch (error) {
+                            Navigator.pop(context); // Tutup dialog jika ada error
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed to delete patient: $error'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Patient ID is not available.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ],
               ),

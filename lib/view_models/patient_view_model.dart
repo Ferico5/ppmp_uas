@@ -96,12 +96,10 @@ class PatientViewModel extends ChangeNotifier {
         Provider.of<ShowDetailPatientsViewModel>(context, listen: false).model.patients.removeWhere((patient) => patient['id'] == patientId);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.data['message'] ?? 'Patient deleted successfully.'),
+            content: Text('Patient deleted successfully.'),
             backgroundColor: Colors.green,
           ),
         );
-        await Provider.of<ShowDetailPatientsViewModel>(context, listen: false).fetchPatients();
-        Navigator.pop(context); // Kembali ke halaman sebelumnya
       } else {
         setError('Failed to delete patient.');
       }
