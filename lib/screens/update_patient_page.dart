@@ -32,9 +32,27 @@ class _UpdatePatientPageState extends State<UpdatePatientPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      final model = Provider.of<UpdatePatientViewModel>(context, listen: false);
-      _selectedGender = model.model.gender.isEmpty ? 'Male' : model.model.gender;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final arguments =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        final model = Provider.of<UpdatePatientViewModel>(context, listen: false);
+        model.setName(arguments['name'] ?? '');
+        model.setAge(arguments['age']?.toString() ?? '');
+        model.setGender(arguments['gender'] ?? 'Male');
+        model.setAddress(arguments['address'] ?? '');
+        model.setPhoneNumber(arguments['phoneNumber'] ?? '');
+        model.setEmail(arguments['email'] ?? '');
+
+        // Set the controllers with existing data
+        _nameController.text = arguments['name'] ?? '';
+        _ageController.text = arguments['age']?.toString() ?? '';
+        _addressController.text = arguments['address'] ?? '';
+        _phoneController.text = arguments['phoneNumber'] ?? '';
+        _emailController.text = arguments['email'] ?? '';
+        _selectedGender = arguments['gender'] ?? 'Male';
+      }
     });
   }
 

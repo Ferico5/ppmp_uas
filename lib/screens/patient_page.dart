@@ -86,7 +86,16 @@ class _PatientPageState extends State<PatientPage> with TickerProviderStateMixin
                     updateOnPressed: () {
                       Navigator.pushNamed(
                         context, 
-                        'updatePatientPage'
+                        'updatePatientPage',
+                        arguments: {
+                          'id': patientId,
+                          'name': viewModel.model.name,
+                          'age': viewModel.model.age,
+                          'gender': viewModel.model.gender,
+                          'address': viewModel.model.address,
+                          'phoneNumber': viewModel.model.phoneNumber,
+                          'email': viewModel.model.email,
+                        }
                       );
                     },
                     deleteOnPressed: () async {
