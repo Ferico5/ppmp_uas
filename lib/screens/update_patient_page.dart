@@ -46,12 +46,12 @@ class _UpdatePatientPageState extends State<UpdatePatientPage> {
         model.setEmail(arguments['email'] ?? '');
 
         // Set the controllers with existing data
-        _nameController.text = arguments['name'] ?? '';
-        _ageController.text = arguments['age']?.toString() ?? '';
-        _addressController.text = arguments['address'] ?? '';
-        _phoneController.text = arguments['phoneNumber'] ?? '';
-        _emailController.text = arguments['email'] ?? '';
-        _selectedGender = arguments['gender'] ?? 'Male';
+        _nameController.text = model.model.name;
+        _ageController.text = model.model.age;
+        _addressController.text = model.model.address;
+        _phoneController.text = model.model.phoneNumber;
+        _emailController.text = model.model.email;
+        _selectedGender = model.model.gender;
       }
     });
   }
@@ -112,12 +112,6 @@ class _UpdatePatientPageState extends State<UpdatePatientPage> {
                 key: _formKey,
                 child: Consumer<UpdatePatientViewModel>(
                   builder: (context, model, child) {
-                    _nameController.text = model.model.name;
-                    _ageController.text = model.model.age;
-                    _addressController.text = model.model.address;
-                    _phoneController.text = model.model.phoneNumber;
-                    _emailController.text = model.model.email;
-
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -216,8 +210,7 @@ class _UpdatePatientPageState extends State<UpdatePatientPage> {
                                 value: gender,
                                 child: Text(gender,
                                     style: const TextStyle(
-                                        color: Colors.black))))
-                                .toList(),
+                                        color: Colors.black)))).toList(),
                             onChanged: (value) {
                               if (value != null) {
                                 model.setGender(value);
@@ -353,12 +346,22 @@ class _UpdatePatientPageState extends State<UpdatePatientPage> {
                                 text: "Save",
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    model.update(context);
+                                    final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+                                    final patientId = arguments?['patientId'] as int?;  // safely retrieve patientId as int
+                                    if (patientId != null) {
+                                      model.updatePatient(context, patientId);
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Patient ID is not available.'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
                                   }
                                 },
                                 backgroundColor: const Color(0xFF00A896),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 12),
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                               ),
                               if (model.model.isLoading)
                                 const Padding(

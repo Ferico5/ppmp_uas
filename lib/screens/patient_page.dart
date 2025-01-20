@@ -88,7 +88,7 @@ class _PatientPageState extends State<PatientPage> with TickerProviderStateMixin
                         context, 
                         'updatePatientPage',
                         arguments: {
-                          'id': patientId,
+                          'patientId': patientId,
                           'name': viewModel.model.name,
                           'age': viewModel.model.age,
                           'gender': viewModel.model.gender,
