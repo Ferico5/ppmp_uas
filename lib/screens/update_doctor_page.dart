@@ -23,6 +23,26 @@ class _UpdateDoctorPageState extends State<UpdateDoctorPage> {
   final _emailFocusNode = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final arguments =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        final model = Provider.of<UpdateDoctorViewModel>(context, listen: false);
+        model.setName(arguments['name'] ?? '');
+        model.setPhoneNumber(arguments['phoneNumber'] ?? '');
+        model.setEmail(arguments['email'] ?? '');
+
+        _nameController.text = model.model.name;
+        _phoneController.text = model.model.phoneNumber;
+        _emailController.text = model.model.email;
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
@@ -69,18 +89,17 @@ class _UpdateDoctorPageState extends State<UpdateDoctorPage> {
           top: true,
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(20), // Padding yang konsisten
+              padding: const EdgeInsets.all(20),
               child: Form(
                 key: _formKey,
                 child: Consumer<UpdateDoctorViewModel>(
                   builder: (context, model, child) {
-                    // Populate the text fields with existing data
                     _nameController.text = model.model.name;
                     _phoneController.text = model.model.phoneNumber;
                     _emailController.text = model.model.email;
 
                     return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center, // Center align
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
@@ -199,7 +218,18 @@ class _UpdateDoctorPageState extends State<UpdateDoctorPage> {
                                 text: "Save",
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    model.update(context);
+                                    final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+                                    final doctorId = arguments?['doctorId'] as int?;
+                                    if (doctorId != null) {
+                                      model.updateDoctor(context, doctorId);
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Doctor ID is not available.'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
                                   }
                                 },
                                 backgroundColor: const Color(0xFF00A896),

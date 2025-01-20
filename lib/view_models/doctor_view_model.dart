@@ -45,7 +45,7 @@ class DoctorViewModel extends ChangeNotifier {
         'https://api-antrian-rs.onrender.com/api/table_dokter/$doctorId',
         options: Options(
           headers: {
-            'Authorization': 'Token $token', // Gunakan token dari SharedPreferences
+            'Authorization': 'Token $token',
           },
         ),
       );

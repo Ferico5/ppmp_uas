@@ -19,7 +19,7 @@ class _NewDoctorPageState extends State<NewDoctorPage> {
   final _phoneNumberController = TextEditingController();
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String? _dropdownValue;
+  // String? _dropdownValue;
 
   @override
   void dispose() {

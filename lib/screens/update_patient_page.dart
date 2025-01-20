@@ -45,7 +45,6 @@ class _UpdatePatientPageState extends State<UpdatePatientPage> {
         model.setPhoneNumber(arguments['phoneNumber'] ?? '');
         model.setEmail(arguments['email'] ?? '');
 
-        // Set the controllers with existing data
         _nameController.text = model.model.name;
         _ageController.text = model.model.age;
         _addressController.text = model.model.address;

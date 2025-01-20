@@ -81,7 +81,16 @@ class _DoctorPageState extends State<DoctorPage> with TickerProviderStateMixin {
                     phoneNumber: viewModel.model.phoneNumber,
                     email: viewModel.model.email,
                     updateOnPressed: () {
-                      Navigator.pushNamed(context, 'updateDoctorPage');
+                      Navigator.pushNamed(
+                        context, 
+                        'updateDoctorPage',
+                        arguments: {
+                          'doctorId': doctorId,
+                          'name': viewModel.model.name,
+                          'phoneNumber': viewModel.model.phoneNumber,
+                          'email': viewModel.model.email,
+                        }
+                      );
                     },
                     deleteOnPressed: () async {
                       if (doctorId != null) {
