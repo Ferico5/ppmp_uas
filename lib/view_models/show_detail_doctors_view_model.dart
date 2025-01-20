@@ -38,7 +38,7 @@ class ShowDetailDoctorsViewModel extends ChangeNotifier {
       }
 
       final response = await Dio().get(
-        'http://10.0.2.2:8000/api/table_dokter',
+        'https://api-antrian-rs.onrender.com/api/table_dokter',
         options: Options(
           headers: {
             'Authorization': 'Token $token', // Gunakan token dari SharedPreferences

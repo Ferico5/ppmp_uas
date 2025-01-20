@@ -49,7 +49,7 @@ class QueueViewModel extends ChangeNotifier {
       }
 
       final response = await Dio().get(
-        'http://10.0.2.2:8000/api/table_pasien/$patientId',
+        'https://api-antrian-rs.onrender.com/api/table_pasien/$patientId',
         options: Options(
           headers: {
             'Authorization': 'Token $token',
@@ -78,7 +78,7 @@ class QueueViewModel extends ChangeNotifier {
       }
 
       final response = await Dio().get(
-        'http://10.0.2.2:8000/api/table_dokter/$doctorId',
+        'https://api-antrian-rs.onrender.com/api/table_dokter/$doctorId',
         options: Options(
           headers: {
             'Authorization': 'Token $token',
@@ -136,7 +136,7 @@ class QueueViewModel extends ChangeNotifier {
       }
 
       final response = await Dio().get(
-        'http://10.0.2.2:8000/api/table_antrian/$queueId',
+        'https://api-antrian-rs.onrender.com/api/table_antrian/$queueId',
         options: Options(
           headers: {
             'Authorization': 'Token $token', // Gunakan token dari SharedPreferences
@@ -175,7 +175,7 @@ class QueueViewModel extends ChangeNotifier {
       }
 
       final response = await Dio().delete(
-        'http://10.0.2.2:8000/api/table_antrian/$queueId',
+        'https://api-antrian-rs.onrender.com/api/table_antrian/$queueId',
         options: Options(
           headers: {
             'Authorization': 'Token $token',

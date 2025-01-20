@@ -84,7 +84,10 @@ class _PatientPageState extends State<PatientPage> with TickerProviderStateMixin
                     phoneNumber: viewModel.model.phoneNumber,
                     email: viewModel.model.email,
                     updateOnPressed: () {
-                      Navigator.pushNamed(context, 'updatePatientPage');
+                      Navigator.pushNamed(
+                        context, 
+                        'updatePatientPage'
+                      );
                     },
                     deleteOnPressed: () async {
                       if (patientId != null) {

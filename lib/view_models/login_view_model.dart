@@ -44,7 +44,7 @@ class LoginViewModel extends ChangeNotifier {
 
     try {
       final response = await Dio().post(
-        'http://10.0.2.2:8000/api/login/',
+        'https://api-antrian-rs.onrender.com/api/login/',
         data: {
           'username': _model.username,
           'password': _model.password,

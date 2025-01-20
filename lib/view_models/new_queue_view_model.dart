@@ -60,7 +60,7 @@ class NewQueueViewModel extends ChangeNotifier {
       }
 
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/table_antrian'),
+        Uri.parse('https://api-antrian-rs.onrender.com/api/table_antrian'),
         headers: {'Authorization': 'Token $token'},
       );
 
@@ -97,7 +97,7 @@ class NewQueueViewModel extends ChangeNotifier {
 
       // Load patients data
       final responsePasien = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/table_pasien'),
+        Uri.parse('https://api-antrian-rs.onrender.com/api/table_pasien'),
         headers: {'Authorization': 'Token $token'},
       );
 
@@ -112,7 +112,7 @@ class NewQueueViewModel extends ChangeNotifier {
 
       // Load doctors data
       final responseDokter = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/table_dokter'),
+        Uri.parse('https://api-antrian-rs.onrender.com/api/table_dokter'),
         headers: {'Authorization': 'Token $token'},
       );
 
@@ -154,7 +154,7 @@ class NewQueueViewModel extends ChangeNotifier {
       }
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/table_antrian'),
+        Uri.parse('https://api-antrian-rs.onrender.com/api/table_antrian'),
         headers: {
           'Authorization': 'Token $token',
           'Content-Type': 'application/json',

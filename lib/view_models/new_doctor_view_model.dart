@@ -45,7 +45,7 @@ class NewDoctorViewModel extends ChangeNotifier {
       return;
     }
 
-    final url = Uri.parse('http://10.0.2.2:8000/api/table_dokter');
+    final url = Uri.parse('https://api-antrian-rs.onrender.com/api/table_dokter');
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Token $token',

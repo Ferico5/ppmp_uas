@@ -38,7 +38,7 @@ class ShowDetailQueuesViewModel extends ChangeNotifier {
       }
 
       final response = await Dio().get(
-        'http://10.0.2.2:8000/api/table_antrian',
+        'https://api-antrian-rs.onrender.com/api/table_antrian',
         options: Options(
           headers: {
             'Authorization': 'Token $token',
@@ -58,7 +58,7 @@ class ShowDetailQueuesViewModel extends ChangeNotifier {
 
         try {
           final patientResponse = await Dio().get(
-            'http://10.0.2.2:8000/api/table_pasien/$patientId',
+            'https://api-antrian-rs.onrender.com/api/table_pasien/$patientId',
             options: Options(
               headers: {
                 'Authorization': 'Token $token',

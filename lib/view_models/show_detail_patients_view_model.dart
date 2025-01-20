@@ -38,7 +38,7 @@ class ShowDetailPatientsViewModel extends ChangeNotifier {
       }
 
       final response = await Dio().get(
-        'http://10.0.2.2:8000/api/table_pasien',
+        'https://api-antrian-rs.onrender.com/api/table_pasien',
         options: Options(
           headers: {
             'Authorization': 'Token $token',

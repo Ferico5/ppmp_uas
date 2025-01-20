@@ -32,7 +32,6 @@ class _UpdatePatientPageState extends State<UpdatePatientPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize _selectedGender with a default value or from the model
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final model = Provider.of<UpdatePatientViewModel>(context, listen: false);
       _selectedGender = model.model.gender.isEmpty ? 'Male' : model.model.gender;
@@ -90,12 +89,11 @@ class _UpdatePatientPageState extends State<UpdatePatientPage> {
           top: true,
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(20), // Padding yang konsisten
+              padding: const EdgeInsets.all(20),
               child: Form(
                 key: _formKey,
                 child: Consumer<UpdatePatientViewModel>(
                   builder: (context, model, child) {
-                    // Populate the text fields with existing data
                     _nameController.text = model.model.name;
                     _ageController.text = model.model.age;
                     _addressController.text = model.model.address;
@@ -103,7 +101,7 @@ class _UpdatePatientPageState extends State<UpdatePatientPage> {
                     _emailController.text = model.model.email;
 
                     return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center, // Center align
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
