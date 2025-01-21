@@ -21,16 +21,15 @@ class PatientModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'nama': name.isNotEmpty ? name : null,  // Cek jika nama tidak kosong, kirim data nama
-      'umur': age.isNotEmpty ? age : null,  // Jika umur tidak kosong, kirim nilai umur
-      'gender': gender.isNotEmpty ? gender : null,  // Sama untuk gender
-      'alamat': address.isNotEmpty ? address : null,  // Sama untuk alamat
-      'no_telp': phoneNumber.isNotEmpty ? phoneNumber : null,  // Sama untuk telp
-      'email': email.isNotEmpty ? email : null,  // Sama untuk email
+      'nama': name.isNotEmpty ? name : null,
+      'umur': age.isNotEmpty ? age : null,
+      'gender': gender.isNotEmpty ? gender : null,
+      'alamat': address.isNotEmpty ? address : null,
+      'no_telp': phoneNumber.isNotEmpty ? phoneNumber : null,
+      'email': email.isNotEmpty ? email : null,
     };
   }
 
-  // You might also want to add a fromJson method to convert the map back to an object
   factory PatientModel.fromJson(Map<String, dynamic> json) {
     return PatientModel(
       name: json['nama'] ?? '',

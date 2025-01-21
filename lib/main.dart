@@ -29,7 +29,7 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<Scaffol
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('authToken'); // Ambil token dari SharedPreferences
+  final token = prefs.getString('authToken');
   runApp(MyApp(token: token));
 }
 

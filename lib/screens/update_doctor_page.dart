@@ -94,10 +94,6 @@ class _UpdateDoctorPageState extends State<UpdateDoctorPage> {
                 key: _formKey,
                 child: Consumer<UpdateDoctorViewModel>(
                   builder: (context, model, child) {
-                    _nameController.text = model.model.name;
-                    _phoneController.text = model.model.phoneNumber;
-                    _emailController.text = model.model.email;
-
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
