@@ -346,7 +346,7 @@ class _UpdatePatientPageState extends State<UpdatePatientPage> {
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
                                     final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-                                    final patientId = arguments?['patientId'] as int?;  // safely retrieve patientId as int
+                                    final patientId = arguments?['patientId'] as int?;
                                     if (patientId != null) {
                                       model.updatePatient(context, patientId);
                                     } else {

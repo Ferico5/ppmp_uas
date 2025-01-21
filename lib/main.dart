@@ -9,6 +9,7 @@ import 'view_models/doctor_view_model.dart';
 import 'view_models/queue_view_model.dart';
 import 'view_models/update_patient_view_model.dart';
 import 'view_models/update_doctor_view_model.dart';
+import 'view_models/update_queue_view_model.dart';
 import 'screens/login_page.dart';
 import 'screens/home_page.dart';
 import 'screens/new_patient_page.dart';
@@ -65,6 +66,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => UpdateDoctorViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => UpdateQueueViewModel(),
         ),
       ],
       child: MaterialApp(

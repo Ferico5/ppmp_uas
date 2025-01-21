@@ -33,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     return ChangeNotifierProvider(
       create: (context) => LoginViewModel(),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: const Color(0xFF1E2429),
         body: Stack(
           children: [

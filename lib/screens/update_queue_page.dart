@@ -14,15 +14,11 @@ class UpdateQueuePage extends StatefulWidget {
 
 class _UpdateQueuePageState extends State<UpdateQueuePage> {
   final _formKey = GlobalKey<FormState>();
-  final _queueNoController = TextEditingController();
   final _queueStatusController = TextEditingController();
-  final _createdOnController = TextEditingController();
   final _patientController = TextEditingController();
   final _doctorController = TextEditingController();
 
-  final _queueNoFocusNode = FocusNode();
   final _queueStatusFocusNode = FocusNode();
-  final _createdOnFocusNode = FocusNode();
   final _patientFocusNode = FocusNode();
   final _doctorFocusNode = FocusNode();
 
@@ -32,23 +28,29 @@ class _UpdateQueuePageState extends State<UpdateQueuePage> {
   @override
   void initState() {
     super.initState();
-    // Initialize _selectedGender with a default value or from the model
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      final model = Provider.of<UpdateQueueViewModel>(context, listen: false);
-      _selectedQueueStatus = model.model.queue_status.isEmpty ? 'Waiting' : model.model.queue_status;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final arguments =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        final model = Provider.of<UpdateQueueViewModel>(context, listen: false);
+        model.setQueueStatus(arguments['queueStatus'] ?? 'Waiting');
+        model.setPatient(arguments['patient'] ?? '');
+        model.setDoctor(arguments['doctor'] ?? '');
+
+        _queueStatusController.text = model.model.queue_status;
+        _patientController.text = model.model.patient;
+        _doctorController.text = model.model.doctor;
+      }
     });
   }
 
   @override
   void dispose() {
-    _queueNoController.dispose();
     _queueStatusController.dispose();
-    _createdOnController.dispose();
     _patientController.dispose();
     _doctorController.dispose();
-    _queueNoFocusNode.dispose();
     _queueStatusFocusNode.dispose();
-    _createdOnFocusNode.dispose();
     _patientFocusNode.dispose();
     _doctorFocusNode.dispose();
     super.dispose();
@@ -90,20 +92,13 @@ class _UpdateQueuePageState extends State<UpdateQueuePage> {
           top: true,
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(20), // Padding yang konsisten
+              padding: const EdgeInsets.all(20),
               child: Form(
                 key: _formKey,
                 child: Consumer<UpdateQueueViewModel>(
                   builder: (context, model, child) {
-                    // Populate the text fields with existing data
-                    _queueNoController.text = model.model.queue_no;
-                    _queueStatusController.text = model.model.queue_status;
-                    _createdOnController.text = model.model.created_on;
-                    _patientController.text = model.model.patient;
-                    _doctorController.text = model.model.doctor;
-
                     return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center, // Center align
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
@@ -115,35 +110,6 @@ class _UpdateQueuePageState extends State<UpdateQueuePage> {
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white),
-                          ),
-                        ),
-                        Align(
-                          alignment: AlignmentDirectional(-1, -1),
-                          child: const Text(
-                            "Queue No. :",
-                            style: TextStyle(
-                              fontFamily: 'Lexend',
-                              fontSize: 17,
-                              letterSpacing: 0.0,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: MyTextFormField(
-                            controller: _queueNoController,
-                            focusNode: _queueNoFocusNode,
-                            hintText: "Queue No...",
-                            labelText: "",
-                            // onChanged: model.setQueueNo,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter a queue number";
-                              }
-                              return null;
-                            },
                           ),
                         ),
                         Align(
@@ -198,35 +164,6 @@ class _UpdateQueuePageState extends State<UpdateQueuePage> {
                               const EdgeInsetsDirectional.fromSTEB(
                                   20, 24, 20, 24),
                             ),
-                          ),
-                        ),
-                        Align(
-                          alignment: AlignmentDirectional(-1, -1),
-                          child: const Text(
-                            "Created On :",
-                            style: TextStyle(
-                              fontFamily: 'Lexend',
-                              fontSize: 17,
-                              letterSpacing: 0.0,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: MyTextFormField(
-                            controller: _createdOnController,
-                            focusNode: _createdOnFocusNode,
-                            hintText: "Patient...",
-                            labelText: "",
-                            onChanged: model.setPatient,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter a date";
-                              }
-                              return null;
-                            },
                           ),
                         ),
                         Align(
@@ -303,7 +240,18 @@ class _UpdateQueuePageState extends State<UpdateQueuePage> {
                                 text: "Save",
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    model.update(context);
+                                    final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+                                    final queueId = arguments?['queueId'] as int?;
+                                    if (queueId != null) {
+                                      model.updateQueue(context, queueId);
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Queue ID is not available.'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
                                   }
                                 },
                                 backgroundColor: const Color(0xFF00A896),

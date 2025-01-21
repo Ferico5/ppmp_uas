@@ -83,7 +83,18 @@ class _QueuePageState extends State<QueuePage> with TickerProviderStateMixin {
                     patient: viewModel.model.patient,
                     doctor: viewModel.model.doctor,
                     updateOnPressed: () {
-                      Navigator.pushNamed(context, 'updateQueuePage');
+                      Navigator.pushNamed(
+                        context, 
+                        'updateQueuePage',
+                        arguments: {
+                          'queueId': queueId,
+                          'queue_no': viewModel.model.queue_no,
+                          'queue_status': viewModel.model.queue_status,
+                          'created_on': viewModel.model.created_on,
+                          'patient': viewModel.model.patient,
+                          'doctor': viewModel.model.doctor,
+                        }
+                      );
                     },
                     deleteOnPressed: () async {
                       if (queueId != null) {
