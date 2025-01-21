@@ -63,14 +63,16 @@ class _NewDoctorPageState extends State<NewDoctorPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Insert New Data Doctor",
-                        style: TextStyle(
-                          fontFamily: 'Lexend',
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      Center(
+                        child: const Text(
+                          "Insert New Data Patient",
+                          style: TextStyle(
+                            fontFamily: 'Lexend',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ), 
                       ),
                       const SizedBox(height: 20),
                       MyTextFormField(

@@ -66,15 +66,17 @@ class _NewPatientPageState extends State<NewPatientPage> {
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Insert New Data Patient",
-                        style: TextStyle(
-                          fontFamily: 'Lexend',
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                    children: [ 
+                      Center(
+                        child: const Text(
+                          "Insert New Data Patient",
+                          style: TextStyle(
+                            fontFamily: 'Lexend',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ), 
                       ),
                       const SizedBox(height: 20),
                       MyTextFormField(
@@ -108,10 +110,13 @@ class _NewPatientPageState extends State<NewPatientPage> {
                       const SizedBox(height: 16),
                       DropdownButtonFormField<String>(
                         value: _dropdownValue,
-                        hint: const Text("Select Gender"),
+                        hint: const Text(
+                          "Select Gender",
+                          style: TextStyle(color: Colors.white70),
+                        ),
                         items: const [
-                          DropdownMenuItem(value: "Male", child: Text("Male")),
-                          DropdownMenuItem(value: "Female", child: Text("Female")),
+                          DropdownMenuItem(value: "Male", child: Text("Male", style: TextStyle(color: Colors.white),)),
+                          DropdownMenuItem(value: "Female", child: Text("Female", style: TextStyle(color: Colors.white),)),
                         ],
                         onChanged: (value) {
                           setState(() {
@@ -119,10 +124,26 @@ class _NewPatientPageState extends State<NewPatientPage> {
                             viewModel.setGender(value);
                           });
                         },
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white12,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFF00A896),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFF00A896),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
+                        style: const TextStyle(color: Colors.white),
+                        dropdownColor: const Color(0xFF1E2429),
                       ),
                       const SizedBox(height: 16),
                       MyTextFormField(

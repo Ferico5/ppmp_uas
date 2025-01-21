@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               Align(
                                 alignment: AlignmentDirectional(-1, -1),
                                 child: Text(
-                                  "Hello, <name>",
+                                  "Welcome...",
                                   style: TextStyle(
                                       fontFamily: 'Lexend',
                                       fontSize: 32,

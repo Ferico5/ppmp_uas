@@ -11,7 +11,7 @@ class MyTextFormField extends StatelessWidget {
   final String? Function(String?)? validator;
   final Widget? suffixIcon;
   final double? width;
-  final TextStyle? style; // add the style
+  final TextStyle? style;
   final List<TextInputFormatter>? inputFormatters;
   final bool? readOnly;
 

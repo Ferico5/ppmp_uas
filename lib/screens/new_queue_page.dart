@@ -103,10 +103,25 @@ class _NewQueuePageState extends State<NewQueuePage> {
                         ),
                         const SizedBox(height: 16),
                         DropdownButtonFormField<Map<String, dynamic>>(
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: 'Select Patient...',
+                            hintStyle: const TextStyle(color: Colors.white70),
                             filled: true,
                             fillColor: Colors.white12,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Color(0xFF00A896),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Color(0xFF00A896),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                           value: _dropdownPatient != null
                               ? model.patients.firstWhere(
@@ -116,7 +131,10 @@ class _NewQueuePageState extends State<NewQueuePage> {
                           items: model.patients
                               .map((patient) => DropdownMenuItem<Map<String, dynamic>>(
                                     value: patient,
-                                    child: Text(patient['nama']),
+                                    child: Text(
+                                      patient['nama'],
+                                      style: const TextStyle(color: Colors.white),
+                                    ),
                                   ))
                               .toList(),
                           onChanged: (value) {
@@ -125,13 +143,30 @@ class _NewQueuePageState extends State<NewQueuePage> {
                               model.setPatient(value?['id'].toString() ?? "");
                             });
                           },
+                          dropdownColor: const Color(0xFF1E2429),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         const SizedBox(height: 16),
                         DropdownButtonFormField<Map<String, dynamic>>(
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: 'Select Doctor...',
+                            hintStyle: const TextStyle(color: Colors.white70),
                             filled: true,
                             fillColor: Colors.white12,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Color(0xFF00A896),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Color(0xFF00A896),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                           value: _dropdownDoctor != null
                               ? model.doctors.firstWhere(
@@ -141,7 +176,10 @@ class _NewQueuePageState extends State<NewQueuePage> {
                           items: model.doctors
                               .map((doctor) => DropdownMenuItem<Map<String, dynamic>>(
                                     value: doctor,
-                                    child: Text(doctor['nama']),
+                                    child: Text(
+                                      doctor['nama'],
+                                      style: const TextStyle(color: Colors.white),
+                                    ),
                                   ))
                               .toList(),
                           onChanged: (value) {
@@ -150,6 +188,8 @@ class _NewQueuePageState extends State<NewQueuePage> {
                               model.setDoctor(value?['id'].toString() ?? "");
                             });
                           },
+                          dropdownColor: const Color(0xFF1E2429),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         Padding(
                           padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 40),
